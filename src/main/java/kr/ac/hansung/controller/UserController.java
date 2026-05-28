@@ -36,7 +36,7 @@ public class UserController {
             RedirectAttributes ra){
 
         // 유효성 검증
-        if(bindingResult.hasErrors()){return "redirect:/password";}
+        if(bindingResult.hasErrors()){return "user/password";}
 
         // 비번 재확인 실패
         if(!dto.getNewPassword().equals(dto.getConfirmPassword())){
