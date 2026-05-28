@@ -1,8 +1,13 @@
 package kr.ac.hansung.controller;
 
 import kr.ac.hansung.dto.ProductDto;
+import kr.ac.hansung.entity.Product;
 import kr.ac.hansung.service.ProductService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -15,8 +20,31 @@ public class ProductController {
     private final ProductService productService;
 
     @GetMapping
-    public String list(Model model) {
-        model.addAttribute("products", productService.findAll());
+    public String list(
+            @RequestParam(required = false) String keyword, //필수는 아니다
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size,
+            Model model) {
+
+        // 원래는 Pageable 타입으로 받는게 일반적(PageRequest는 Pageable 구현체라 상관없긴 함)
+        // 페이징 규칙 정의
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.by("id"));
+
+        // 빈 문자열("")을 null로 정규화
+        String normalizedKeyword = (keyword != null && !keyword.isBlank()) ? keyword : null;
+
+        Page<Product> productPage; // 서비스계층에서 받아올 페이지객체
+        if(normalizedKeyword != null) {
+            // 검색어가 있을 경우 -> 키워드에 해당하는 목록
+            productPage = productService.searchProducts(pageRequest, normalizedKeyword);
+        } else {
+            // 검색어가 없을 경우 -> 전체 목록
+            productPage = productService.getProducts(pageRequest);
+        }
+
+        //타임리프 html로 전달할 데이터
+        model.addAttribute("productPage", productPage);
+        model.addAttribute("keyword", normalizedKeyword);
         return "products/list";
     }
 
