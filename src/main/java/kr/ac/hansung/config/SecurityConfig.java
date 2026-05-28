@@ -29,7 +29,7 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
             .authorizeHttpRequests(authz -> authz
-                .requestMatchers("/", "/login", "/signup",
+                .requestMatchers("/", "/login", "/signup", "/access-denied",
                                  "/css/**", "/js/**", "/images/**", "/favicon.ico").permitAll()
                 .requestMatchers("/admin/**").hasRole("ADMIN")
                 .requestMatchers("/products/add",
@@ -51,7 +51,9 @@ public class SecurityConfig {
                 .deleteCookies("JSESSIONID")
                 .permitAll()
             )
-            .userDetailsService(userDetailsService);
+            .exceptionHandling(ex -> ex // 인가가 없을시 접근 제한 페이지로 이동
+                .accessDeniedPage("/access-denied")
+            ).userDetailsService(userDetailsService);
 
         return http.build();
     }
