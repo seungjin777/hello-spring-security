@@ -57,16 +57,19 @@
           <div class="mb-3">
             <label>가격</label>
             <input type="number" class="form-control" th:field="*{price}"/>
+            <span class="text-danger" th:errors="*{price}"></span>
           </div>
 
           <div class="mb-3">
             <label>재고</label>
             <input type="number" class="form-control" th:field="*{stock}"/>
+            <span class="text-danger" th:errors="*{stock}"></span>
           </div>
 
           <div class="mb-3">
             <label>설명</label>
             <textarea class="form-control" th:field="*{description}"></textarea>
+            <span class="text-danger" th:errors="*{description}"></span>
           </div>
         </form>
 
