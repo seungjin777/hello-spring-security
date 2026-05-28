@@ -35,4 +35,10 @@ public class AuthController {
         userService.signup(dto);
         return "redirect:/login?registered";
     }
+
+    // 접근권한 없을시
+    @GetMapping("/access-denied")
+    public String accessDenied() {
+        return "exception/access-denied";
+    }
 }
